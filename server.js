@@ -36,6 +36,14 @@ app.put("/users/:id", async(req, res) => {
     res.json(user);
 });
 
+//delete user
+app.delete("/users/:id", async(req, res) => {
+   await User.findByIdAndDelete(req.params.id);
+   res.json({
+    message: "User Deleted"
+   });
+});
+
 //create task
 app.post("/tasks", async(req, res) => {
     const task = await Task.create(req.body);
@@ -48,6 +56,24 @@ app.get("/tasks", async(req, res) => {
     res.json(tasks);
 });
 
+//update task
+app.put("/tasks/:id", async(req, res) => {
+    const task = await Task.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        { new: true } //returns the updated user
+    );
+    res.json(task);
+});
+
+//delete task
+app.delete("/tasks/:id", async(req, res) => {
+    await Task.findByIdAndDelete(req.params.id);
+    res.json({
+        message: "Task deleted"
+    });
+});
+
 //save message
 app.post("/messages", async(req, res) => {
     const message = await Message.create(req.body);
@@ -58,6 +84,30 @@ app.post("/messages", async(req, res) => {
 app.get("/messages", async(req, res) => {
     const message = await Message.find();
     res.json(message);
-})
+});
+
+app.post("/register", async(req, res) => {
+    const user = await User.create(req.body);
+    res.json(user);
+});
+
+app.post("/login", async(req, res) => {
+    console.log(req.body);
+    const user = await User.findOne({
+        email: req.body.email
+    });
+    console.log(user);
+    console.log(user.password);
+    console.log(req.body.password);
+    console.log(typeof user.password);
+console.log(typeof req.body.password);
+    if(user && user.password === String(req.body.password)){
+        res.send("Login Successful");
+    }
+    else {
+        res.send("Invalid Credentials")
+    }
+});
+
 
 app.listen(3000);
